@@ -98,7 +98,6 @@ const eventSchema = new Schema<EventDocument>(
     title: stringField('Title'),
     slug: {
       type: String,
-      unique: true,
       required: true,
       trim: true,
     },

@@ -20,7 +20,6 @@ const bookingSchema = new Schema<BookingDocument>(
       type: Schema.Types.ObjectId,
       ref: 'Event',
       required: [true, 'Event ID is required'],
-      index: true, // Index for faster event-based queries
     },
     email: {
       type: String,
@@ -53,20 +52,18 @@ bookingSchema.index({ eventId: 1, email: 1 });
 bookingSchema.pre<BookingDocument>('save', async function (next) {
   try {
     if (!this.eventId) {
-      return next(new Error('Event ID is required'));
+      throw new Error('Event ID is required');
     }
 
     // Ensure referenced Event exists before creating a Booking
     const eventExists = await Event.exists({ _id: this.eventId });
     if (!eventExists) {
-      return next(new Error('Referenced event does not exist'));
+      throw new Error('Referenced event does not exist');
     }
 
     if (!this.email || !EMAIL_REGEX.test(this.email)) {
-      return next(new Error('Email must be a valid email address'));
+      throw new Error('Email must be a valid email address');
     }
-
-    next();
   } catch (error) {
     next(error as Error);
   }
