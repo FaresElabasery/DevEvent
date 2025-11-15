@@ -52,20 +52,23 @@ bookingSchema.index({ eventId: 1, email: 1 });
 bookingSchema.pre<BookingDocument>('save', async function (next) {
   try {
     if (!this.eventId) {
-      throw new Error('Event ID is required');
+      return next(new Error('Event ID is required'));
     }
 
     // Ensure referenced Event exists before creating a Booking
     const eventExists = await Event.exists({ _id: this.eventId });
     if (!eventExists) {
-      throw new Error('Referenced event does not exist');
+      return next(new Error('Referenced event does not exist'));
     }
 
     if (!this.email || !EMAIL_REGEX.test(this.email)) {
-      throw new Error('Email must be a valid email address');
+      return next(new Error('Email must be a valid email address'));
     }
+
+    // All validations passed, proceed with save
+    return next();
   } catch (error) {
-    next(error as Error);
+    return next(error as Error);
   }
 });
 
