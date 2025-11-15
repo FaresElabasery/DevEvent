@@ -1,10 +1,12 @@
-import mongoose, { ConnectOptions, Mongoose } from 'mongoose';
+import mongoose, { ConnectOptions, Mongoose } from "mongoose";
 
 // Read MongoDB connection string from environment variables.
 // Throw early with a clear message if it's missing so callers fail fast.
-const MONGODB_URI = process.env.MONGODB_URI ?? '';
+const MONGODB_URI = process.env.MONGODB_URI ?? "";
 if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable in your environment');
+  throw new Error(
+    "Please define the MONGODB_URI environment variable in your environment"
+  );
 }
 
 // Typed cache used to store Mongoose connection and connection promise.
@@ -46,10 +48,18 @@ export async function dbConnect(): Promise<Mongoose> {
     const opts: ConnectOptions = {
       // Recommended: disable buffering to fail fast when the server is unreachable.
       bufferCommands: false,
+      serverSelectionTimeoutMS: 5000, // 5 seconds timeout
     };
 
     // Store the promise so parallel calls share the same connection attempt.
-    cache.promise = mongoose.connect(MONGODB_URI, opts).then((m) => m);
+    cache.promise = mongoose
+      .connect(MONGODB_URI, opts)
+      .then((m) => m)
+      .catch((err) => {
+        cache.promise = null;
+        // On next call, dbConnect() will retry with exponential backoff or caller implements it
+        throw err;
+      });
   }
 
   // Await the connection promise and cache the resolved Mongoose instance.

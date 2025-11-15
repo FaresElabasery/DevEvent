@@ -154,6 +154,13 @@ const eventSchema = new Schema<EventDocument>(
 // Unique index on slug for fast lookups and enforcing uniqueness
 eventSchema.index({ slug: 1 }, { unique: true });
 
+// Pre-validate hook to ensure slug exists before required validation
+eventSchema.pre<EventDocument>('validate', function (next) {
+  if (this.isModified('title') || !this.slug) {
+    this.slug = generateSlug(this.title);
+  }
+  next();
+});
 // Pre-save hook for slug generation and date/time normalization
 // - Generates a URL-friendly slug from title, only when title changes
 // - Normalizes date to ISO (YYYY-MM-DD)
@@ -178,11 +185,6 @@ eventSchema.pre<EventDocument>('save', function (next) {
     if (!isNonEmptyString(value)) {
       return next(new Error(`${String(field)} is required and cannot be empty`));
     }
-  }
-
-  // Only regenerate slug when title is modified
-  if (this.isModified('title') || !this.slug) {
-    this.slug = generateSlug(this.title);
   }
 
   try {
