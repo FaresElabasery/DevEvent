@@ -57,7 +57,7 @@ export async function dbConnect(): Promise<Mongoose> {
       .then((m) => m)
       .catch((err) => {
         cache.promise = null;
-        // On next call, dbConnect() will retry with exponential backoff or caller implements it
+        // On next call, dbConnect() will retry immediately (caller should implement backoff if needed)
         throw err;
       });
   }

@@ -160,8 +160,7 @@ eventSchema.pre<EventDocument>('validate', function (next) {
   }
   next();
 });
-// Pre-save hook for slug generation and date/time normalization
-// - Generates a URL-friendly slug from title, only when title changes
+// Pre-save hook for runtime checks and date/time normalization
 // - Normalizes date to ISO (YYYY-MM-DD)
 // - Normalizes time to HH:mm (24-hour)
 eventSchema.pre<EventDocument>('save', function (next) {
