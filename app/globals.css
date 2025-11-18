@@ -199,7 +199,7 @@
     }
   }
 
-  #event {
+  .event {
     .header {
       @apply flex w-2/3 flex-col items-start gap-4 max-lg:w-full mb-10;
     }
@@ -226,7 +226,7 @@
       }
 
       .booking {
-        @apply flex-1 w-full p-4 border-l border-gray-700;
+        @apply flex-1 w-full p-4  border-gray-700;
 
         .signup-card {
           @apply bg-dark-100 border-dark-200 card-shadow flex w-full flex-col gap-6 rounded-[10px] border px-5 py-6;
@@ -255,7 +255,7 @@
     @apply bg-dark-100 text-light-100 text-xs rounded-[6px] px-5 py-2;
   }
 
-  #book-event {
+  .book-event {
     @apply flex flex-col gap-6;
 
     form {
