@@ -1,4 +1,4 @@
-'use server '
+'use server'
 
 import { Booking } from "@/database";
 import dbConnect from "../mongodb";
@@ -12,16 +12,14 @@ type CreateBookingProps = {
 export async function CreateBooking({eventId,slug,email}:CreateBookingProps) {
     try {
         await dbConnect()
-        const booking = (await Booking.create({eventId,slug,email})).lean();
+        await Booking.create({eventId,slug,email});
         return {
             success: true,
-            booking,
         }
     } catch (error) {
+        console.log(error)
         return {
             success: false,
-            message: 'Failed to create booking',
-            error
         }
     }
 }

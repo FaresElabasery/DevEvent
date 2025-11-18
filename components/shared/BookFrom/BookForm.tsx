@@ -2,6 +2,7 @@
 
 import { IEvent } from "@/database/event.model";
 import { CreateBooking } from "@/lib/actions/booking.action";
+import posthog from "posthog-js";
 import { useState } from "react"
 
 const BookForm = ({ eventId, slug }: { eventId: IEvent['_id'], slug: string }) => {
@@ -10,16 +11,21 @@ const BookForm = ({ eventId, slug }: { eventId: IEvent['_id'], slug: string }) =
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const { success, error } = await CreateBooking({
+            const { success } = await CreateBooking({
                 eventId,
                 slug,
                 email,
             });
-            if (error) {
-                console.error('Error booking event:', error);
-            }
             if (success) {
                 setIsSubmitted(true);
+                posthog.capture('booking_success', {
+                    eventId,
+                    slug,
+                    email,
+                })
+            } else {
+                console.error('Error booking event');
+                posthog.captureException('Error booking event')
             }
         } catch (error) {
             console.error('Error booking event:', error);
@@ -43,7 +49,7 @@ const BookForm = ({ eventId, slug }: { eventId: IEvent['_id'], slug: string }) =
                                 placeholder="Enter your Email"
                                 onChange={(e) => setEmail(e.target.value)} />
                         </div>
-                        <button type="submit" onSubmit={handleSubmit} className="pill">Book Now</button>
+                        <button type="submit" onClick={(e)=>handleSubmit(e)} className="pill">Book Now</button>
                     </div>
                 </form>
             )}

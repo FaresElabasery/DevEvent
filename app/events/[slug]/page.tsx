@@ -87,7 +87,7 @@ const EventDetailsPage = async ({ params }: EventDetailsPageProps) => {
     return (
         <section className="event">
             <div className="header">
-                <h1>{title}</h1>
+                <h1 className="pb-1">{title}</h1>
                 <p>{description}</p>
             </div>
             <div className="details">
