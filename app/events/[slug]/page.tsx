@@ -124,7 +124,7 @@ const EventDetailsPage = async ({ params }: EventDetailsPageProps) => {
                         ) : (
                             <p className="text-sm -my-4 capitalize h-0 overflow-hidden group-hover:h-5 group-hover:-my-3 duration-200 group-hover:block group-hover:animate-in">Be the first to book your spot</p>
                         )}
-                        <BookForm />
+                        <BookForm eventId={eventData._id} slug={slug} />
                     </div>
                 </aside>
             </div>

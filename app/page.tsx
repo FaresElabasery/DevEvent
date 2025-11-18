@@ -1,12 +1,14 @@
 import EventCard from "@/components/shared/EventCard/EventCard"
 import ExploreBtn from "@/components/shared/ExploreBtn/ExploreBtn"
 import { IEvent } from "@/database/event.model"
+import { cacheLife } from "next/cache"
 const Baseurl = process.env.NEXT_PUBLIC_BASE_URL!
 
 const Home = async () => {
+  'use cache'
   const res = await fetch(`${Baseurl}/api/events`)
   const events = await res.json().then((data) => data.events)
-  console.log(events);
+  cacheLife('default')
   
   return (
     <section className=' '>
