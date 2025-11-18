@@ -2,6 +2,7 @@ import { Event } from "@/database";
 import dbConnect from "@/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import {v2 as cloudinary} from 'cloudinary'
+import { IEvent } from "@/database/event.model";
 
 // Required fields for creating an event
 const REQUIRED_EVENT_FIELDS = [
@@ -59,6 +60,9 @@ export async function POST(req:NextRequest) {
         const arrayBuffer = await file.arrayBuffer();
         const buffer =Buffer.from(arrayBuffer);
 
+        const agenda = JSON.parse(event.agenda as string)  
+        const tags = JSON.parse(event.tags as string)
+
         const uploadResult = await new Promise<unknown>((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(
                 { resource_type: 'image', folder: 'devEvents' },
@@ -72,7 +76,7 @@ export async function POST(req:NextRequest) {
 
         event.image = (uploadResult as { secure_url: string }).secure_url;
 
-        const createEvent = await Event.create(event as Record<string, unknown>);
+        const createEvent = await Event.create({...event,agenda,tags} as Record<string, unknown>);
         return NextResponse.json({message:'Event Created Successfully',event:createEvent},{status:201})
     } catch (e) {
         console.log(e);
