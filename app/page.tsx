@@ -1,13 +1,14 @@
 import EventCard from "@/components/shared/EventCard/EventCard"
 import ExploreBtn from "@/components/shared/ExploreBtn/ExploreBtn"
-import { IEvent } from "@/database/event.model"
+// import { IEvent } from "@/database/event.model"
+import { events } from "@/lib/constants"
 import { cacheLife } from "next/cache"
-const Baseurl = process.env.NEXT_PUBLIC_BASE_URL!
+// const Baseurl = process.env.NEXT_PUBLIC_BASE_URL!
 
 const Home = async () => {
   'use cache'
-  const res = await fetch(`${Baseurl}/api/events`)
-  const events = await res.json().then((data) => data.events)
+  // const res = await fetch(`${Baseurl}/api/events`)
+  // const events = await res.json().then((data) => data.events)
   cacheLife('default')
   
   return (
@@ -19,8 +20,8 @@ const Home = async () => {
         <h3>Featured Events</h3>
         {/* Featured events list or component goes here */}
         <ul className="events">
-          {events && events.length > 0 && events.map((event: IEvent) => (
-            <li key={event.title} className="">
+          {events && events.length > 0 && events.map((event) => (
+            <li key={event.title}>
               <EventCard {...event} />
             </li>
           ))}
