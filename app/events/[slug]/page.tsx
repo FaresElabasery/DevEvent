@@ -9,7 +9,7 @@ const EventDetailsPage = async ({ params }: EventDetailsPageProps) => {
     const slug = await params.then((p) => p.slug);
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <EventDetails slug={slug} />
+            <EventDetails slug={Promise.resolve(slug)} />
         </Suspense>
     )
 }

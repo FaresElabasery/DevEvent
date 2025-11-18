@@ -2,6 +2,7 @@ import BookForm from "@/components/shared/BookFrom/BookForm"
 import EventCard from "@/components/shared/EventCard/EventCard"
 import { IEvent } from "@/database/event.model"
 import { getSimilarEventsBySlug } from "@/lib/actions/event.actions"
+import { cacheLife } from "next/cache"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 
@@ -50,12 +51,15 @@ const NumberOfBookings = 10; // Example static number
 
 const BaseURL = process.env.NEXT_PUBLIC_BASE_URL!
 
-const EventDetails = async ({ slug }: { slug: string }) => {
-    const similar = await getSimilarEventsBySlug(slug)
+const EventDetails = async ({ slug }: { slug: Promise<string> }) => {
+    "use cache"
+    cacheLife('default')
+    const slugParams = await slug;
+    const similar = await getSimilarEventsBySlug(slugParams)
 
     let eventData: IEvent | null = null;
     try {
-        const res = await fetch(`${BaseURL}/api/events/${slug}`);
+        const res = await fetch(`${BaseURL}/api/events/${slugParams}`);
 
         // Check if response is OK (2xx status)
         if (!res.ok) {
@@ -120,7 +124,7 @@ const EventDetails = async ({ slug }: { slug: string }) => {
                         ) : (
                             <p className="text-sm -my-4 capitalize h-0 overflow-hidden group-hover:h-5 group-hover:-my-3 duration-200 group-hover:block group-hover:animate-in">Be the first to book your spot</p>
                         )}
-                        <BookForm eventId={eventData._id} slug={slug} />
+                        <BookForm eventId={eventData._id} slug={slugParams} />
                     </div>
                 </aside>
             </div>

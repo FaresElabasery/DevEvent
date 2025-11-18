@@ -11,11 +11,11 @@ const Home = async () => {
   cacheLife('default')
   
   return (
-    <section className=' '>
+    <section>
       <h1 className="text-center">The Hub for Every Dev <br /> Event You Can’t Miss</h1>
       <p className='mt-3 text-center'>Hackathons, Meetups, and Conferences, All in One Place</p>
       <ExploreBtn />
-      <div className="mt-25 space-y-7">
+      <div className="mt-25 space-y-7" id="events">
         <h3>Featured Events</h3>
         {/* Featured events list or component goes here */}
         <ul className="events">

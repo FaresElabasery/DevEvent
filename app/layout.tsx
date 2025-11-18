@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${martianMono.variable} ${schibstedGrotesk.variable} min-h-screen antialiased`}
+        className={`${martianMono.variable} ${schibstedGrotesk.variable} antialiased`}
       >
           <Navbar />
           <div className="min-h-screen absolute inset-0 -z-1 ">

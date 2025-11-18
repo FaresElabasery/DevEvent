@@ -108,7 +108,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 scroll-smooth duration-300;
   }
 
   body {
@@ -137,11 +137,6 @@
 }
 
 @layer components {
-  #home {
-    .subheading {
-      @apply text-light-100 text-lg max-sm:text-sm text-center mt-5;
-    }
-  }
 
   .explore-btn {
     @apply border-dark-200 bg-dark-100 flex w-fit cursor-pointer  rounded-full border px-8 py-3.5 max-sm:w-full text-center;
