@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  cacheComponents: true,
+  // Disabled cacheComponents to allow dynamic routes without prerendering
+  // cacheComponents: true,
   images: {
     remotePatterns: [
       {

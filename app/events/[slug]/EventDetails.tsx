@@ -2,9 +2,9 @@ import BookForm from "@/components/shared/BookFrom/BookForm"
 import EventCard from "@/components/shared/EventCard/EventCard"
 import { IEvent } from "@/database/event.model"
 import { getSimilarEventsBySlug } from "@/lib/actions/event.actions"
-import { cacheLife } from "next/cache"
 import Image from "next/image"
 import { notFound } from "next/navigation"
+import { Suspense } from "react"
 
 type EventDetailsItemProps = {
     alt: string,
@@ -51,15 +51,29 @@ const NumberOfBookings = 10; // Example static number
 
 const BaseURL = process.env.NEXT_PUBLIC_BASE_URL!
 
+const SimilarEvents = async ({ slug }: { slug: string }) => {
+    const similar = await getSimilarEventsBySlug(slug);
+    return (
+        <div className="mt-20">
+            <h2>Similar Events</h2>
+            <div className="grid grid-cols-3 gap-4 mt-4">
+                {similar.map((event) => (
+                    <EventCard key={event.title} {...event} />
+                ))}
+            </div>
+        </div>
+    );
+}
+
 const EventDetails = async ({ slug }: { slug: Promise<string> }) => {
-    "use cache"
-    cacheLife('default')
     const slugParams = await slug;
-    const similar = await getSimilarEventsBySlug(slugParams)
 
     let eventData: IEvent | null = null;
     try {
-        const res = await fetch(`${BaseURL}/api/events/${slugParams}`);
+        const res = await fetch(`${BaseURL}/api/events/${slugParams}`, {
+            cache: 'force-cache',
+            next: { revalidate: 3600 }
+        });
 
         // Check if response is OK (2xx status)
         if (!res.ok) {
@@ -129,14 +143,9 @@ const EventDetails = async ({ slug }: { slug: Promise<string> }) => {
                 </aside>
             </div>
 
-            <div className="mt-20">
-                <h2>Similar Events</h2>
-                <div className="grid grid-cols-3 gap-4 mt-4">
-                    {similar.map((event) => (
-                        <EventCard key={title} {...event} />
-                    ))}
-                </div>
-            </div>
+            <Suspense fallback={<div>Loading similar events...</div>}>
+                <SimilarEvents slug={slugParams} />
+            </Suspense>
 
         </section>
     );
