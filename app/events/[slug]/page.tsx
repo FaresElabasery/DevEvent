@@ -1,5 +1,7 @@
 import BookForm from "@/components/shared/BookFrom/BookForm"
+import EventCard from "@/components/shared/EventCard/EventCard"
 import { IEvent } from "@/database/event.model"
+import { getSimilarEventsBySlug } from "@/lib/actions/event.actions"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 
@@ -48,10 +50,12 @@ const EventDetailsTags = ({ tags }: { tags: string[] }) => {
 
 const NumberOfBookings = 10; // Example static number
 
+
 const BaseURL = process.env.NEXT_PUBLIC_BASE_URL!
 
 const EventDetailsPage = async ({ params }: EventDetailsPageProps) => {
     const { slug } = await params
+    const similar = await getSimilarEventsBySlug(slug)
 
     let eventData: IEvent | null = null;
     try {
@@ -102,12 +106,12 @@ const EventDetailsPage = async ({ params }: EventDetailsPageProps) => {
                         <EventDetailsItem alt="mode" img="/icons/mode.svg" label={mode} />
                         <EventDetailsItem alt="audience" img="/icons/audience.svg" label={audience} />
                     </div>
-                    <EventDetailsAgenda agenda={JSON.parse(agenda[0])} />
+                    <EventDetailsAgenda agenda={agenda} />
                     <div className="flex-col-gap-2">
                         <h2>About the Organizer</h2>
                         <p>{organizer}</p>
                     </div>
-                    <EventDetailsTags tags={JSON.parse(tags[0])} />
+                    <EventDetailsTags tags={tags} />
                 </div>
 
 
@@ -123,6 +127,15 @@ const EventDetailsPage = async ({ params }: EventDetailsPageProps) => {
                         <BookForm />
                     </div>
                 </aside>
+            </div>
+
+            <div className="mt-20">
+                <h2>Similar Events</h2>
+                <div className="grid grid-cols-3 gap-4 mt-4">
+                    {similar.map((event) => (
+                        <EventCard key={title} {...event} />
+                    ))}
+                </div>
             </div>
 
         </section>
