@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Model, SchemaTypeOptions } from 'mongoose';
 
 // Event document shape in MongoDB
-export interface EventDocument extends Document {
+export interface IEvent extends Document {
   title: string;
   slug: string;
   description: string;
@@ -20,7 +20,7 @@ export interface EventDocument extends Document {
   updatedAt: Date;
 }
 
-export type EventModel = Model<EventDocument>;
+export type EventModel = Model<IEvent>;
 
 // Helper to validate non-empty trimmed strings
 const isNonEmptyString = (value: unknown): value is string => {
@@ -93,7 +93,7 @@ const stringArrayField = (fieldName: string): SchemaTypeOptions<string[]> => ({
   },
 });
 
-const eventSchema = new Schema<EventDocument>(
+const eventSchema = new Schema<IEvent>(
   {
     title: stringField('Title'),
     slug: {
@@ -154,7 +154,7 @@ const eventSchema = new Schema<EventDocument>(
 eventSchema.index({ slug: 1 }, { unique: true });
 
 // Pre-validate hook to ensure slug exists before required validation
-eventSchema.pre<EventDocument>('validate', function (next) {
+eventSchema.pre<IEvent>('validate', function (next) {
   if (this.isModified('title') || !this.slug) {
     this.slug = generateSlug(this.title);
   }
@@ -163,9 +163,9 @@ eventSchema.pre<EventDocument>('validate', function (next) {
 // Pre-save hook for runtime checks and date/time normalization
 // - Normalizes date to ISO (YYYY-MM-DD)
 // - Normalizes time to HH:mm (24-hour)
-eventSchema.pre<EventDocument>('save', function (next) {
+eventSchema.pre<IEvent>('save', function (next) {
   // Ensure title and other required fields are non-empty at runtime
-  const requiredStringFields: Array<keyof EventDocument> = [
+  const requiredStringFields: Array<keyof IEvent> = [
     'title',
     'description',
     'overview',
@@ -199,4 +199,4 @@ eventSchema.pre<EventDocument>('save', function (next) {
 // Re-use model in development to avoid OverwriteModelError with Next.js HMR
 export const Event: EventModel =
   (mongoose.models.Event as EventModel) ||
-  mongoose.model<EventDocument, EventModel>('Event', eventSchema);
+  mongoose.model<IEvent, EventModel>('Event', eventSchema);
